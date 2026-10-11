@@ -35,8 +35,12 @@ Run the tests:
 dotnet test
 ```
 
-Build the installer (output goes to `artifacts\installer`):
+Build the installer (output goes to `artifacts\installer`). The version comes from `Directory.Build.props`.
 
 ```powershell
-.\installer\build.ps1 -Version 1.0.0
+.\installer\build.ps1
 ```
+
+## License
+
+[MIT](LICENSE)
