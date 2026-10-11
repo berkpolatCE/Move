@@ -1,0 +1,64 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Move"
+           Manufacturer="Berk Polat"
+           Version="$(var.Version)"
+           UpgradeCode="6131122A-78ED-4A2F-A0EA-8B1601C08FB7"
+           Scope="perUser">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Move is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="MoveIcon" SourceFile="..\src\Move\Assets\Move.ico" />
+    <Property Id="ARPPRODUCTICON" Value="MoveIcon" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/berkpolatCE/Move" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="UserProgramsFolder" Name="Programs">
+        <Directory Id="INSTALLFOLDER" Name="Move">
+          <Component Id="MoveExecutable" Guid="67CA1FE0-4968-433C-B1F6-5501C5CA358B">
+            <File Id="MoveExe" Source="$(var.AppPublishDir)\Move.exe" />
+            <RegistryValue Root="HKCU"
+                           Key="Software\Move"
+                           Name="InstallFolder"
+                           Type="string"
+                           Value="[INSTALLFOLDER]"
+                           KeyPath="yes" />
+            <RemoveFolder Id="RemoveInstallFolder" On="uninstall" />
+            <RemoveFolder Id="RemoveUserProgramsFolder" Directory="UserProgramsFolder" On="uninstall" />
+          </Component>
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="StartMenuShortcut">
+        <Shortcut Id="MoveShortcut"
+                  Name="Move"
+                  Description="Hourly reminders to get up and move"
+                  Target="[INSTALLFOLDER]Move.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\Move"
+                       Name="StartMenuShortcut"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <Feature Id="Main">
+      <ComponentRef Id="MoveExecutable" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+
+    <CustomAction Id="LaunchMove"
+                  Directory="INSTALLFOLDER"
+                  ExeCommand="&quot;[INSTALLFOLDER]Move.exe&quot;"
+                  Return="asyncNoWait" />
+
+    <InstallExecuteSequence>
+      <Custom Action="LaunchMove" After="InstallFinalize" Condition="NOT (REMOVE~=&quot;ALL&quot;) AND UILevel &gt;= 3" />
+    </InstallExecuteSequence>
+  </Package>
+</Wix>

@@ -1,0 +1,317 @@
+<Window x:Class="Move.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:Move.Views"
+        Title="Move settings"
+        Width="760"
+        Height="860"
+        MinWidth="580"
+        MinHeight="540"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <DataTemplate x:Key="ExerciseItemTemplate" DataType="{x:Type views:ExerciseItem}">
+            <Border BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                <StackPanel>
+                    <Grid MinHeight="60">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ToggleButton Grid.ColumnSpan="4"
+                                      Style="{StaticResource RowToggleStyle}"
+                                      AutomationProperties.Name="{Binding DisplayName}"
+                                      IsChecked="{Binding IsEditing}"
+                                      Checked="OnExerciseExpanded" />
+                        <Border Width="28"
+                                Height="28"
+                                Margin="16,0"
+                                CornerRadius="14"
+                                IsHitTestVisible="False"
+                                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Text="{Binding Number}" />
+                        </Border>
+                        <StackPanel Grid.Column="1"
+                                    Margin="0,10"
+                                    VerticalAlignment="Center"
+                                    IsHitTestVisible="False">
+                            <TextBlock FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Text="{Binding DisplayName}" />
+                            <TextBlock Margin="0,2,0,0"
+                                       Style="{StaticResource CaptionTextStyle}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Text="{Binding Summary}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2"
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <Button Style="{StaticResource IconButtonStyle}"
+                                    Content="&#xE74A;"
+                                    ToolTip="Move up"
+                                    AutomationProperties.Name="Move up"
+                                    IsEnabled="{Binding CanMoveUp}"
+                                    Click="OnMoveExerciseUp" />
+                            <Button Style="{StaticResource IconButtonStyle}"
+                                    Content="&#xE74B;"
+                                    ToolTip="Move down"
+                                    AutomationProperties.Name="Move down"
+                                    IsEnabled="{Binding CanMoveDown}"
+                                    Click="OnMoveExerciseDown" />
+                            <Button Style="{StaticResource IconButtonStyle}"
+                                    Content="&#xE74D;"
+                                    ToolTip="Remove"
+                                    AutomationProperties.Name="Remove"
+                                    IsEnabled="{Binding CanRemove}"
+                                    Click="OnRemoveExercise" />
+                        </StackPanel>
+                        <TextBlock x:Name="Chevron"
+                                   Grid.Column="3"
+                                   Margin="10,0,20,0"
+                                   FontSize="12"
+                                   IsHitTestVisible="False"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Style="{StaticResource GlyphStyle}"
+                                   Text="&#xE70D;" />
+                    </Grid>
+                    <Grid x:Name="Editor"
+                          Margin="60,6,20,20"
+                          Visibility="Collapsed"
+                          IsVisibleChanged="OnExerciseEditorVisibleChanged">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="76" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Text="Name" />
+                        <TextBox x:Name="NameBox"
+                                 Grid.Column="1"
+                                 Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="1"
+                                   Margin="0,10,0,0"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Text="Amount" />
+                        <StackPanel Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="0,10,0,0"
+                                    Orientation="Horizontal">
+                            <TextBox Width="90" Text="{Binding AmountText, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox Width="130" Margin="8,0,0,0" SelectedIndex="{Binding UnitIndex}">
+                                <ComboBoxItem Content="reps" />
+                                <ComboBoxItem Content="seconds" />
+                            </ComboBox>
+                        </StackPanel>
+                        <TextBlock Grid.Row="2"
+                                   Margin="0,10,0,0"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Text="Tip" />
+                        <TextBox Grid.Row="2"
+                                 Grid.Column="1"
+                                 Margin="0,10,0,0"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding Tip, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                    <Setter TargetName="Editor" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="Chevron" Property="Text" Value="&#xE70E;" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel MaxWidth="780" Margin="36,28,36,36">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image Width="44" Height="44" Source="{StaticResource MoveLogo}" />
+                    <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+                        <TextBlock FontSize="24" FontWeight="SemiBold" Text="Move" />
+                        <TextBlock Style="{StaticResource CaptionTextStyle}" FontSize="13" Text="Short exercise breaks while you work" />
+                    </StackPanel>
+                </Grid>
+
+                <Border x:Name="WelcomePanel"
+                        Margin="0,24,0,0"
+                        Padding="16,12"
+                        CornerRadius="8"
+                        Visibility="Collapsed"
+                        Background="{DynamicResource SystemFillColorAttentionBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Margin="0,2,14,0"
+                                   VerticalAlignment="Top"
+                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                   Style="{StaticResource GlyphStyle}"
+                                   Text="&#xE946;" />
+                        <TextBlock Grid.Column="1"
+                                   TextWrapping="Wrap"
+                                   Text="Move runs in the system tray. Click its icon any time to see what's next, pause reminders, or come back here." />
+                    </Grid>
+                </Border>
+
+                <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Reminders" />
+                <views:SettingsCard Glyph="&#xE823;"
+                                    Header="Remind me every"
+                                    Description="How long you can sit before Move suggests a break">
+                    <ComboBox x:Name="IntervalPicker" Width="190" DisplayMemberPath="Label" />
+                </views:SettingsCard>
+                <views:SettingsCard Glyph="&#xE805;"
+                                    Header="When I step away"
+                                    Description="How the countdown treats time away from your computer">
+                    <views:SettingsCard.Details>
+                        <StackPanel Margin="0,18,0,2">
+                            <RadioButton x:Name="ResetWhenIdleOption" GroupName="TimerMode">
+                                <StackPanel>
+                                    <TextBlock Text="Start the countdown over" />
+                                    <TextBlock Style="{StaticResource CaptionTextStyle}" Text="Stepping away counts as your break" />
+                                </StackPanel>
+                            </RadioButton>
+                            <StackPanel Margin="28,10,0,0"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding IsChecked, ElementName=ResetWhenIdleOption, Converter={StaticResource VisibleWhenTrue}}">
+                                <TextBlock VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="I'm away after" />
+                                <ComboBox x:Name="IdleResetPicker" Width="160" Margin="12,0" DisplayMemberPath="Label" />
+                                <TextBlock VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="without keyboard or mouse input" />
+                            </StackPanel>
+                            <RadioButton x:Name="FixedIntervalOption" Margin="0,16,0,0" GroupName="TimerMode">
+                                <StackPanel>
+                                    <TextBlock Text="Keep a fixed schedule" />
+                                    <TextBlock Style="{StaticResource CaptionTextStyle}" Text="Remind me every interval, even right after I've been away" />
+                                </StackPanel>
+                            </RadioButton>
+                        </StackPanel>
+                    </views:SettingsCard.Details>
+                </views:SettingsCard>
+                <views:SettingsCard Glyph="&#xE916;"
+                                    Header="Snooze for"
+                                    Description="How long Snooze holds off the reminder">
+                    <ComboBox x:Name="SnoozePicker" Width="190" DisplayMemberPath="Label" />
+                </views:SettingsCard>
+
+                <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Schedule" />
+                <views:SettingsCard Glyph="&#xE787;"
+                                    Header="Active hours"
+                                    Description="Only remind me during part of the day">
+                    <CheckBox x:Name="ActiveHoursToggle" Style="{StaticResource ToggleSwitchStyle}" />
+                    <views:SettingsCard.Details>
+                        <StackPanel Margin="0,16,0,2"
+                                    Orientation="Horizontal"
+                                    Visibility="{Binding IsChecked, ElementName=ActiveHoursToggle, Converter={StaticResource VisibleWhenTrue}}">
+                            <TextBlock VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Text="From" />
+                            <ComboBox x:Name="ActiveFromPicker" Width="130" Margin="12,0" DisplayMemberPath="Label" />
+                            <TextBlock VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Text="to" />
+                            <ComboBox x:Name="ActiveToPicker" Width="130" Margin="12,0,0,0" DisplayMemberPath="Label" />
+                        </StackPanel>
+                    </views:SettingsCard.Details>
+                </views:SettingsCard>
+
+                <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="Exercises" />
+                <views:SettingsCard Glyph="&#xE8B1;"
+                                    Header="Shuffle order"
+                                    Description="Every exercise still comes up once per round">
+                    <CheckBox x:Name="ShuffleToggle" Style="{StaticResource ToggleSwitchStyle}" />
+                </views:SettingsCard>
+                <Border Padding="0" Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <ItemsControl x:Name="ExerciseList"
+                                      Focusable="False"
+                                      ItemTemplate="{StaticResource ExerciseItemTemplate}" />
+                        <Button Margin="10,8"
+                                HorizontalAlignment="Left"
+                                Style="{StaticResource SubtleButtonStyle}"
+                                AutomationProperties.Name="Add exercise"
+                                Click="OnAddExercise">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="14" Style="{StaticResource GlyphStyle}" Text="&#xE710;" />
+                                <TextBlock Margin="10,0,0,0" Text="Add exercise" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="General" />
+                <views:SettingsCard Glyph="&#xE767;"
+                                    Header="Chime"
+                                    Description="Plays with the popup. In fullscreen games and apps you only hear the chime.">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Margin="0,0,16,0"
+                                Style="{StaticResource IconButtonStyle}"
+                                Content="&#xE768;"
+                                ToolTip="Play the chime"
+                                Click="OnPreviewChime" />
+                        <CheckBox x:Name="ChimeToggle" VerticalAlignment="Center" Style="{StaticResource ToggleSwitchStyle}" />
+                    </StackPanel>
+                </views:SettingsCard>
+                <views:SettingsCard Glyph="&#xE7E8;"
+                                    Header="Start with Windows"
+                                    Description="Open Move automatically when you sign in">
+                    <CheckBox x:Name="StartWithWindowsToggle" Style="{StaticResource ToggleSwitchStyle}" />
+                </views:SettingsCard>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="1"
+                Padding="36,16"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="ErrorText"
+                           Margin="0,0,16,0"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button MinWidth="110" Content="Cancel" IsCancel="True" Click="OnCancel" />
+                    <Button MinWidth="110"
+                            Margin="8,0,0,0"
+                            Content="Save"
+                            Style="{DynamicResource AccentButtonStyle}"
+                            Click="OnSave" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
