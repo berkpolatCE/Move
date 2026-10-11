@@ -270,7 +270,7 @@
                 <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="General" />
                 <views:SettingsCard Glyph="&#xE767;"
                                     Header="Chime"
-                                    Description="Plays with the popup. In fullscreen games and apps you only hear the chime.">
+                                    Description="Plays with the popup. In fullscreen games and videos, Move always chimes and shows the exercise in a small corner notice instead.">
                     <StackPanel Orientation="Horizontal">
                         <Button Margin="0,0,16,0"
                                 Style="{StaticResource IconButtonStyle}"

@@ -6,7 +6,7 @@ A small Windows tray app that reminds you to get up and move. After an hour at y
 
 - **Centered reminder popup** with the exercise, how many reps or seconds, and a form tip. Done, Snooze, or Skip.
 - **Built-in timer** for timed exercises like the wall sit and stretch.
-- **Game friendly.** When a fullscreen game or app is in front, Move plays three bells instead of showing the popup.
+- **Game friendly.** When a fullscreen game or video is in front, Move plays three bells and shows the exercise in a small corner notice that you can click through, instead of the popup.
 - **Two timer modes.** Restart the countdown when you step away from the keyboard, or keep a fixed schedule.
 - **Snooze and pause** from the popup or the tray menu (30 minutes, 1 hour, 2 hours, until tomorrow, or until you resume).
 - **Active hours**, so reminders only happen during the part of the day you choose.

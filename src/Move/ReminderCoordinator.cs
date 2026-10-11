@@ -16,6 +16,7 @@ public sealed class ReminderCoordinator : IDisposable
     private AppSettings settings;
     private DateTime lastTickUtc;
     private ReminderWindow? reminder;
+    private ReminderBanner? banner;
     private SettingsWindow? settingsWindow;
 
     public ReminderCoordinator(SettingsStore store)
@@ -87,8 +88,9 @@ public sealed class ReminderCoordinator : IDisposable
             case Presence.Away:
                 return ReminderStatus.Due;
             case Presence.Fullscreen:
+                ShowBanner(rotation.Current);
                 Chime.PlayBells();
-                scheduler.Restart();
+                MoveToNextExercise();
                 return ReminderStatus.Counting;
             default:
                 ShowReminder(scheduler.IsSnoozed ? "Snooze is over." : DescribeTimeSinceBreak());
@@ -133,6 +135,25 @@ public sealed class ReminderCoordinator : IDisposable
             return;
         }
 
+        MoveToNextExercise();
+    }
+
+    private void ShowBanner(Exercise exercise)
+    {
+        banner?.Close();
+        banner = new ReminderBanner(exercise);
+        banner.Closed += (sender, _) =>
+        {
+            if (ReferenceEquals(sender, banner))
+            {
+                banner = null;
+            }
+        };
+        banner.Show();
+    }
+
+    private void MoveToNextExercise()
+    {
         rotation.Advance();
         store.SaveRotation(rotation.State);
         scheduler.Restart();
