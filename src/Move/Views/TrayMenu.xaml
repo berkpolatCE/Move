@@ -14,6 +14,20 @@
             </StackPanel>
         </MenuItem.Header>
     </MenuItem>
+    <MenuItem x:Name="LastReminderItem"
+              Focusable="False"
+              IsHitTestVisible="False"
+              Visibility="Collapsed">
+        <MenuItem.Icon>
+            <TextBlock Style="{StaticResource MenuGlyphStyle}" Text="&#xE81C;" />
+        </MenuItem.Icon>
+        <MenuItem.Header>
+            <StackPanel Margin="0,2,0,4">
+                <TextBlock x:Name="LastReminderHeading" Style="{StaticResource CaptionTextStyle}" />
+                <TextBlock x:Name="LastReminderText" />
+            </StackPanel>
+        </MenuItem.Header>
+    </MenuItem>
     <Separator />
     <MenuItem Header="Move now" Click="OnMoveNow">
         <MenuItem.Icon>

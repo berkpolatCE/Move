@@ -19,7 +19,7 @@ Download `Move-<version>-x64.msi` from the [latest release](https://github.com/b
 
 The installer isn't code-signed, so Windows SmartScreen may warn you the first time. Choose **More info** and then **Run anyway**.
 
-Move appears in the system tray. Click the icon to see what's next, pause reminders, or open settings. Settings are stored in `%AppData%\Move`.
+Move appears in the system tray. Click the icon to see what's next and your last reminder, pause reminders, or open settings. Settings are stored in `%AppData%\Move`.
 
 ## Build from source
 

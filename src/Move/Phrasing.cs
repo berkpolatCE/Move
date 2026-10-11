@@ -21,6 +21,9 @@ public static class Phrasing
         return minutes == 0 ? Count(hours, "hour") : $"{Count(hours, "hour")} {Count(minutes, "minute")}";
     }
 
+    public static string Moment(DateTime when, DateTime now) =>
+        when.Date == now.Date ? when.ToShortTimeString() : $"{when:ddd} {when.ToShortTimeString()}";
+
     public static string Countdown(TimeSpan remaining)
     {
         if (remaining < TimeSpan.FromMinutes(1))

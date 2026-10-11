@@ -31,6 +31,13 @@ public partial class TrayMenu : ContextMenu
         ResumeItem.Visibility = isPaused ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    public void ShowLastReminder(string heading, string exercise)
+    {
+        LastReminderHeading.Text = heading;
+        LastReminderText.Text = exercise;
+        LastReminderItem.Visibility = Visibility.Visible;
+    }
+
     private void OnMoveNow(object sender, RoutedEventArgs e) => MoveNowRequested?.Invoke(this, EventArgs.Empty);
 
     private void OnReset(object sender, RoutedEventArgs e) => ResetRequested?.Invoke(this, EventArgs.Empty);

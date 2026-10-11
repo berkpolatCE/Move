@@ -18,6 +18,7 @@ public sealed class ReminderCoordinator : IDisposable
     private ReminderWindow? reminder;
     private ReminderBanner? banner;
     private SettingsWindow? settingsWindow;
+    private (Exercise Exercise, DateTime ShownAt)? lastReminder;
 
     public ReminderCoordinator(SettingsStore store)
     {
@@ -114,6 +115,7 @@ public sealed class ReminderCoordinator : IDisposable
             return;
         }
 
+        RecordReminder(rotation.Current);
         reminder = new ReminderWindow(rotation.Current, reason, settings.SnoozeMinutes);
         reminder.Closed += OnReminderClosed;
         reminder.Show();
@@ -140,6 +142,7 @@ public sealed class ReminderCoordinator : IDisposable
 
     private void ShowBanner(Exercise exercise)
     {
+        RecordReminder(exercise);
         banner?.Close();
         banner = new ReminderBanner(exercise);
         banner.Closed += (sender, _) =>
@@ -151,6 +154,8 @@ public sealed class ReminderCoordinator : IDisposable
         };
         banner.Show();
     }
+
+    private void RecordReminder(Exercise exercise) => lastReminder = (exercise, DateTime.Now);
 
     private void MoveToNextExercise()
     {
@@ -219,8 +224,17 @@ public sealed class ReminderCoordinator : IDisposable
         }
     }
 
-    private void UpdateTray(ReminderStatus status) =>
+    private void UpdateTray(ReminderStatus status)
+    {
         tray.ShowStatus(DescribeStatus(status), status == ReminderStatus.Paused);
+
+        if (lastReminder is var (exercise, shownAt))
+        {
+            tray.Menu.ShowLastReminder(
+                $"Last reminder · {Phrasing.Moment(shownAt, DateTime.Now)}",
+                $"{exercise.Name} · {exercise.AmountText}");
+        }
+    }
 
     private string DescribeStatus(ReminderStatus status) => status switch
     {
@@ -243,8 +257,6 @@ public sealed class ReminderCoordinator : IDisposable
             return "Paused until tomorrow";
         }
 
-        return time.Date == DateTime.Today
-            ? $"Paused until {time.ToShortTimeString()}"
-            : $"Paused until {time:ddd} {time.ToShortTimeString()}";
+        return $"Paused until {Phrasing.Moment(time, DateTime.Now)}";
     }
 }

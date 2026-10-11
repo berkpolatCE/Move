@@ -33,6 +33,17 @@ public class PhrasingTests
         Assert.Equal(expected, Phrasing.Countdown(TimeSpan.FromSeconds(seconds)));
 
     [Fact]
+    public void DescribesMomentsWithTheDayOnlyWhenItIsNotToday()
+    {
+        var now = new DateTime(2026, 10, 12, 18, 0, 0);
+        var earlierToday = new DateTime(2026, 10, 12, 14, 32, 0);
+        var lastNight = new DateTime(2026, 10, 11, 23, 50, 0);
+
+        Assert.Equal(earlierToday.ToShortTimeString(), Phrasing.Moment(earlierToday, now));
+        Assert.Equal($"{lastNight:ddd} {lastNight.ToShortTimeString()}", Phrasing.Moment(lastNight, now));
+    }
+
+    [Fact]
     public void DescribesExerciseAmounts()
     {
         Assert.Equal("15 reps", new Exercise { Amount = 15, Unit = ExerciseUnit.Reps }.AmountText);
