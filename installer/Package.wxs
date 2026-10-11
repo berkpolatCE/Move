@@ -57,7 +57,25 @@
                   ExeCommand="&quot;[INSTALLFOLDER]Move.exe&quot;"
                   Return="asyncNoWait" />
 
+    <CustomAction Id="CloseMove"
+                  FileRef="MoveExe"
+                  ExeCommand="--uninstall"
+                  Return="ignore" />
+
+    <CustomAction Id="RemoveStartupEntry"
+                  Directory="INSTALLFOLDER"
+                  ExeCommand="&quot;[System64Folder]reg.exe&quot; delete &quot;HKCU\Software\Microsoft\Windows\CurrentVersion\Run&quot; /v Move /f"
+                  Execute="deferred"
+                  Impersonate="yes"
+                  Return="ignore" />
+
     <InstallExecuteSequence>
+      <Custom Action="CloseMove"
+              Before="InstallValidate"
+              Condition="REMOVE~=&quot;ALL&quot; AND NOT UPGRADINGPRODUCTCODE" />
+      <Custom Action="RemoveStartupEntry"
+              Before="RemoveFiles"
+              Condition="REMOVE~=&quot;ALL&quot; AND NOT UPGRADINGPRODUCTCODE" />
       <Custom Action="LaunchMove" After="InstallFinalize" Condition="NOT (REMOVE~=&quot;ALL&quot;) AND UILevel &gt;= 3" />
     </InstallExecuteSequence>
   </Package>
