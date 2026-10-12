@@ -1,6 +1,6 @@
 # Move
 
-A small Windows tray app that reminds you to get up and move. After an hour at your computer it pops up a quick exercise (jumping jacks, squats, push-ups, a wall sit and more) and cycles to a new one each time.
+A small tray app for Windows and macOS that reminds you to get up and move. After an hour at your computer it pops up a quick exercise (jumping jacks, squats, push-ups, a wall sit and more) and cycles to a new one each time.
 
 ## Features
 
@@ -11,9 +11,11 @@ A small Windows tray app that reminds you to get up and move. After an hour at y
 - **Snooze and pause** from the popup or the tray menu (30 minutes, 1 hour, 2 hours, until tomorrow, or until you resume).
 - **Active hours**, so reminders only happen during the part of the day you choose.
 - **Your own exercise list.** Add, edit, reorder, remove, or shuffle exercises.
-- Follows the Windows light or dark theme and can start when you sign in.
+- Follows the system light or dark theme and can start when you sign in.
 
 ## Install
+
+### Windows
 
 Download `Move-<version>-x64.msi` from the [latest release](https://github.com/berkpolatCE/Move/releases/latest) and run it. It installs for your user account only, so no administrator rights are needed, and it doesn't need .NET installed.
 
@@ -21,7 +23,17 @@ The installer isn't code-signed, so Windows SmartScreen may warn you the first t
 
 Move appears in the system tray. Click the icon to see what's next and your last reminder, pause reminders, or open settings. Settings are stored in `%AppData%\Move`.
 
+### macOS
+
+Download `Move-<version>-macOS.dmg` from the [latest release](https://github.com/berkpolatCE/Move/releases/latest), open it, and drag Move into Applications. It needs macOS 14 or later and runs natively on Apple silicon and Intel Macs.
+
+The app isn't notarized, so macOS blocks it the first time you open it. Go to **System Settings > Privacy & Security**, scroll down, and choose **Open Anyway**.
+
+Move appears in the menu bar at the top right. Click the icon to see what's next and your last reminder, pause reminders, or open settings. Settings are stored in `~/Library/Application Support/Move`.
+
 ## Build from source
+
+### Windows
 
 Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download) on Windows.
 
@@ -39,6 +51,32 @@ Build the installer (output goes to `artifacts\installer`). The version comes fr
 
 ```powershell
 .\installer\build.ps1
+```
+
+### macOS
+
+The macOS app is a Swift package in `macos`. It requires Xcode 16 or later, or just the Command Line Tools (`xcode-select --install`).
+
+```bash
+swift run --package-path macos Move
+```
+
+Run the tests:
+
+```bash
+swift test --package-path macos
+```
+
+With only the Command Line Tools installed, `swift test` can't find the Testing framework on its own. Point it there:
+
+```bash
+swift test --package-path macos -Xswiftc -F/Library/Developer/CommandLineTools/Library/Developer/Frameworks -Xlinker -rpath -Xlinker /Library/Developer/CommandLineTools/Library/Developer/Frameworks -Xlinker -rpath -Xlinker /Library/Developer/CommandLineTools/Library/Developer/usr/lib
+```
+
+Build the app and the disk image installer (output goes to `artifacts/installer`). The version comes from `Directory.Build.props`. **Open at login** only works from the built app, not from `swift run`.
+
+```bash
+./macos/installer/build.sh
 ```
 
 ## License
